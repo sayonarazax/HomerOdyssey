@@ -25,6 +25,6 @@
 
         <activity android:name="com.sayonarazax.homerodyssey.GameActivity"
             android:screenOrientation="landscape"></activity>
+        <service android:enabled="true" android:name=".BackGroundMusic"/>
     </application>
-
 </manifest>

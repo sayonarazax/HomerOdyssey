@@ -1,6 +1,7 @@
 package com.sayonarazax.homerodyssey;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Canvas;
@@ -24,6 +25,9 @@ public class TDView extends SurfaceView implements Runnable {
     int destroyed = -1;
     int win = -1;
     int music = -1;
+
+    private SharedPreferences prefs;
+    private SharedPreferences.Editor editor;
 
     volatile boolean playing;
     Thread gameThread = null;
@@ -55,7 +59,12 @@ public class TDView extends SurfaceView implements Runnable {
         screenY = y;
         holder = getHolder();
         mPaint = new Paint();
-        int numSpecs = 40;
+
+        prefs = context.getSharedPreferences("HiScores",
+                context.MODE_PRIVATE);
+        editor = prefs.edit();
+        fastestTime = prefs.getLong("fastestTime", 1000000);
+        startGame();
     }
 
     private void initSounds() {
@@ -115,6 +124,7 @@ public class TDView extends SurfaceView implements Runnable {
             control();
         }
     }
+
 
     private void control() {
         try {
@@ -246,6 +256,8 @@ public class TDView extends SurfaceView implements Runnable {
 //check for new fastest time
             soundPool.play(win, 1, 1, 0, 0, 1);
             if(timeTaken < fastestTime) {
+                editor.putLong("fastestTime", timeTaken);
+                editor.commit();
                 fastestTime = timeTaken;
             }
 // avoid ugly negative numbers
